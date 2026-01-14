@@ -8,6 +8,15 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Employee struct {
+	ID        int32            `json:"id"`
+	UserID    int64            `json:"user_id"`
+	JobTitle  string           `json:"job_title"`
+	Country   string           `json:"country"`
+	Salary    pgtype.Numeric   `json:"salary"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+}
+
 type User struct {
 	ID           int32            `json:"id"`
 	Username     string           `json:"username"`

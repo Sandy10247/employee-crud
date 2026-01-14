@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 
+	employeehandler "server/http/handlers/employee_handler"
 	userhandler "server/http/handlers/user_handler"
 	"server/http/handlers/util"
 	md "server/http/middleware"
@@ -45,11 +46,17 @@ func registerUserRoutes(r chi.Router) {
 
 	// Protected Routes "/v1"
 	r.Route("/", func(r chi.Router) {
-		// Auth Middleware
+		// ✚ Auth Middleware
 		r.Use(md.JWTMiddleware)
 
-		// User Routes
+		// User 😊
 		r.Get("/status", userhandler.CheckStatus)
 		r.Get("/logout", userhandler.LogOut)
+
+		// Employee 🤵
+		r.Post("/emp/new", employeehandler.CreateEmp)
+		r.Post("/emp/update", employeehandler.UpdateEmp)
+		r.Get("/emp/details", employeehandler.GetEmployee)
+		r.Delete("/emp/delete", employeehandler.DeleteEmployee)
 	})
 }
