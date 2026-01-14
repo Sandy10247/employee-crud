@@ -52,7 +52,7 @@ const getUserById = `-- name: GetUserById :one
 SELECT id, username, email, password_hash, created_at FROM users WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetUserById(ctx context.Context, id int64) (*User, error) {
+func (q *Queries) GetUserById(ctx context.Context, id int32) (*User, error) {
 	row := q.db.QueryRow(ctx, getUserById, id)
 	var i User
 	err := row.Scan(
