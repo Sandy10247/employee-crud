@@ -1,8 +1,6 @@
 -- +goose Up
-CREATE SEQUENCE users_id_seq START WITH 1001;
-
-CREATE TABLE users (
-    id BIGINT PRIMARY KEY DEFAULT nextval('users_id_seq'),
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
@@ -10,4 +8,4 @@ CREATE TABLE users (
 );
 
 -- +goose Down
-DROP TABLE users;
+DROP TABLE IF EXISTS users;

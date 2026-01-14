@@ -26,14 +26,14 @@ func GracefulShutdown(server *http.Server, done chan bool, db *pgx.Conn) {
 	if err := server.Shutdown(ctx); err != nil {
 		log.Printf("Error 'server.Shutdown' error: %v", err)
 	}
+	log.Println("Server Stopped 🔴")
 
 	// Close DB Connection
 	err := db.Close(ctx)
 	if err != nil {
 		log.Printf("Server forced to shutdown with error: %v", err)
 	}
-
-	log.Println("Server Down 🔴")
+	log.Println("Database Closed 🔴")
 
 	// Notify the main goroutine that the shutdown is complete
 	done <- true

@@ -131,6 +131,5 @@ func DisconnectDB() {
 		ctx, cancelFn := context.WithTimeout(context.Background(), 1*time.Second)
 		defer cancelFn()
 		DB.Close(ctx)
-		log.Println("Database connection closed")
 	}
 }
