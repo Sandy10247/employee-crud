@@ -7,8 +7,6 @@ import (
 	"server/http/handlers/util"
 	md "server/http/middleware"
 
-	// "server/models"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 )
@@ -30,7 +28,6 @@ func InitRouter() http.Handler {
 
 	registerUtilRoutes(v1Router)
 	registerUserRoutes(v1Router)
-	// registerFeedRoutes(v1Router, apiCfg)
 
 	router.Mount("/v1", v1Router)
 
@@ -45,16 +42,14 @@ func registerUtilRoutes(r chi.Router) {
 func registerUserRoutes(r chi.Router) {
 	r.Post("/register", userhandler.HandlerCreateUser)
 	r.Post("/login", userhandler.HandlerLogin)
-	r.With(md.JWTMiddleware).Post("/logout", userhandler.LogOut)
-	r.With(md.JWTMiddleware).Get("/status", userhandler.CheckStatus)
-	// r.Get("/user", dbCfg.middlewareAuth(dbCfg.handlerGetUser))
-	// r.Get("/posts", dbCfg.middlewareAuth(dbCfg.handlerGetPostsForUser))
-}
 
-// func registerFeedRoutes(r chi.Router, apiCfg config.ApiConfig) {
-// 	r.Post("/feed", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
-// 	r.Get("/feed", apiCfg.handlerGetFeed)
-// 	r.Post("/feed_follow", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
-// 	r.Get("/feed_follow", apiCfg.middlewareAuth(apiCfg.handlerGetFeedFollows))
-// 	r.Delete("/feed_follow/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.handlerDeleteFeedFollows))
-// }
+	// Protected Routes "/v1"
+	r.Route("/", func(r chi.Router) {
+		// Auth Middleware
+		r.Use(md.JWTMiddleware)
+
+		// User Routes
+		r.Get("/status", userhandler.CheckStatus)
+		r.Get("/logout", userhandler.LogOut)
+	})
+}

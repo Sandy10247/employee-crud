@@ -45,7 +45,8 @@ func HandlerCreateUser(w http.ResponseWriter, r *http.Request) {
 		PasswordHash: hashed,
 		Username:     reqBody.Username,
 		CreatedAt: pgtype.Timestamp{
-			Time: time.Now().UTC(),
+			Time:  time.Now().UTC(),
+			Valid: true,
 		},
 	})
 	if err != nil {
@@ -53,7 +54,7 @@ func HandlerCreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := helper.CreateToken(user.ID, user.Email, user.Username)
+	token, err := helper.CreateToken(int64(user.ID), user.Email, user.Username)
 	if err != nil {
 		response.RespondeWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -93,7 +94,7 @@ func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("user id", user.ID, "user email", user.Email, "user username", user.Username)
 
-	token, err := helper.CreateToken(user.ID, user.Email, user.Username)
+	token, err := helper.CreateToken(int64(user.ID), user.Email, user.Username)
 	if err != nil {
 		response.RespondeWithError(w, http.StatusInternalServerError, err.Error())
 		return
