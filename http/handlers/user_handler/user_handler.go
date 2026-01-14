@@ -5,20 +5,17 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"server/http/helper"
+	"server/http/middleware"
 	"server/http/response"
 	"server/sql/database"
 
 	db "server/init"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func HandlerCreateUser(w http.ResponseWriter, r *http.Request) {
 	type userReqBody struct {
-		// Name string `json:"name"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
 		Username string `json:"username"`
@@ -44,10 +41,6 @@ func HandlerCreateUser(w http.ResponseWriter, r *http.Request) {
 		Email:        reqBody.Email,
 		PasswordHash: hashed,
 		Username:     reqBody.Username,
-		CreatedAt: pgtype.Timestamp{
-			Time:  time.Now().UTC(),
-			Valid: true,
-		},
 	})
 	if err != nil {
 		response.RespondeWithError(w, 400, fmt.Sprintf("Couldnot create user %v", err))
@@ -114,9 +107,9 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 }
 
 func CheckStatus(w http.ResponseWriter, r *http.Request) {
-	userInfo, ok := helper.GetUserFromContext(r.Context())
+	userInfo, ok := middleware.GetUserFromContext(r.Context())
 	if !ok {
-		response.RespondeWithError(w, 400, "user not found")
+		response.RespondeWithError(w, http.StatusBadRequest, "user not found")
 		return
 	}
 

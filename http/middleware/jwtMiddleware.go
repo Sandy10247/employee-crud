@@ -3,7 +3,23 @@ package middleware
 import (
 	"context"
 	"net/http"
+
 	"server/http/helper"
+)
+
+// Key type for context values
+type (
+	contextUserKey string
+	UserInfo       struct {
+		ID       int64
+		Email    string
+		Username string
+	}
+)
+
+const (
+	// UserIDKey is the key for user ID in the request context
+	UserCtx contextUserKey = "user"
 )
 
 // JWTMiddleware is a middleware that checks for a valid JWT cookie,
@@ -32,7 +48,7 @@ func JWTMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		userInfo := helper.UserInfo{
+		userInfo := UserInfo{
 			Email:    email,
 			Username: claims["username"].(string),
 			ID:       int64(claims["id"].(float64)),
@@ -40,9 +56,15 @@ func JWTMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Store the user info in the context
-		ctx := context.WithValue(r.Context(), "user", userInfo)
+		ctx := context.WithValue(r.Context(), UserCtx, userInfo)
 
 		// Call the next handler with the updated context
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+// GetUserFromContext retrieves the UserInfo stored in the context.
+func GetUserFromContext(ctx context.Context) (*UserInfo, bool) {
+	userInfo, ok := ctx.Value(UserCtx).(UserInfo)
+	return &userInfo, ok
 }

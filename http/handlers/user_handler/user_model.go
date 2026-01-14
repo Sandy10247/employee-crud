@@ -13,3 +13,4 @@ func dbuserToUser(dbUser *database.User) User {
 		Username: dbUser.Username,
 	}
 }
+

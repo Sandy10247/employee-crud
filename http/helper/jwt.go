@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"time"
@@ -11,23 +10,20 @@ import (
 
 var secretKey = []byte(os.Getenv("SECRET_KEY"))
 
-
-func CreateToken(id int64,email string, username string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, 
+func CreateToken(id int64, email string, username string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
-			"id":    id,
-			"email": email,
+			"id":       id,
+			"email":    email,
 			"username": username,
-			"exp":   time.Now().Add(time.Hour * 24).Unix(),
+			"exp":      time.Now().Add(time.Hour * 24).Unix(),
 		})
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
 		return "", err
 	}
 	return tokenString, nil
-
 }
-
 
 func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -44,17 +40,4 @@ func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	}
 
 	return claims, nil
-}
-
-
-type UserInfo struct {
-	ID int64
-	Email string
-	Username string
-}
-
-// GetUserFromContext retrieves the UserInfo stored in the context.
-func GetUserFromContext(ctx context.Context) (*UserInfo, bool) {
-	userInfo, ok := ctx.Value("user").(UserInfo)
-	return &userInfo, ok
 }
