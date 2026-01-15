@@ -17,19 +17,17 @@ INSERT INTO employees
     user_id,
     job_title,
     country,
-    salary,
-    created_at
+    salary
 ) VALUES (
-    $1, $2, $3, $4, $5
+    $1, $2, $3, $4
 ) RETURNING id, user_id, job_title, country, salary, created_at
 `
 
 type CreateEmployeeParams struct {
-	UserID    int64            `json:"user_id"`
-	JobTitle  string           `json:"job_title"`
-	Country   string           `json:"country"`
-	Salary    pgtype.Numeric   `json:"salary"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UserID   int64          `json:"user_id"`
+	JobTitle string         `json:"job_title"`
+	Country  string         `json:"country"`
+	Salary   pgtype.Numeric `json:"salary"`
 }
 
 func (q *Queries) CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (*Employee, error) {
@@ -38,7 +36,6 @@ func (q *Queries) CreateEmployee(ctx context.Context, arg CreateEmployeeParams) 
 		arg.JobTitle,
 		arg.Country,
 		arg.Salary,
-		arg.CreatedAt,
 	)
 	var i Employee
 	err := row.Scan(

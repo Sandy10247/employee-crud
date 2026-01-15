@@ -8,6 +8,12 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Adminuser struct {
+	ID        int32            `json:"id"`
+	UserID    int64            `json:"user_id"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+}
+
 type Employee struct {
 	ID        int32            `json:"id"`
 	UserID    int64            `json:"user_id"`

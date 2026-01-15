@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 
+	adminhandler "server/http/handlers/admin_handler"
 	employeehandler "server/http/handlers/employee_handler"
 	userhandler "server/http/handlers/user_handler"
 	"server/http/handlers/util"
@@ -65,9 +66,21 @@ func registerUserRoutes(r chi.Router) {
 
 	// Admin Routes
 	r.Route("/admin", func(r chi.Router) {
-		// Admin Middleware
+		// Middleware
+		r.Use(md.JWTMiddleware)        // Has to be a legit User
+		r.Use(md.CheckAdminMiddleware) // Has to be Admin user
 
+		// Admin Routes
 		r.Get("/sal-metrics", employeehandler.GetSalaryMetricsByCountry) // Get Salary Metrics
 		r.Get("/sal-avg", employeehandler.GetAvgSalaryPerJobTitle)
+	})
+
+	// Supreme Leader Route ⚡️⚡️
+	r.Route("/supreme-leader", func(r chi.Router) {
+		// Middleware
+		r.Use(md.JWTMiddleware)           // Has to a legit User
+		r.Use(md.SupremeLeaderMiddleware) // Check for Supreme Leader
+
+		r.Post("/make-break", adminhandler.MakeBreak)
 	})
 }

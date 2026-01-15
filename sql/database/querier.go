@@ -9,9 +9,12 @@ import (
 )
 
 type Querier interface {
+	CreateAdminUser(ctx context.Context, userID int64) (*Adminuser, error)
 	CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (*Employee, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (*User, error)
+	DeleteAdminUser(ctx context.Context, userID int64) (*Adminuser, error)
 	DeleteEmployeeByUserId(ctx context.Context, userID int64) (*Employee, error)
+	GetAdminUser(ctx context.Context, userID int64) (*Adminuser, error)
 	GetAvgSalaryPerJobTitle(ctx context.Context, jobTitle string) (*GetAvgSalaryPerJobTitleRow, error)
 	GetEmployeByuserById(ctx context.Context, userID int64) (*Employee, error)
 	GetSalaryMetricsByCountry(ctx context.Context, country string) (*GetSalaryMetricsByCountryRow, error)

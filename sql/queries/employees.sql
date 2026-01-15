@@ -8,10 +8,9 @@ INSERT INTO employees
     user_id,
     job_title,
     country,
-    salary,
-    created_at
+    salary
 ) VALUES (
-    $1, $2, $3, $4, $5
+    $1, $2, $3, $4
 ) RETURNING * ;
 
 -- name: UpdateEmployeeByUserId :one
