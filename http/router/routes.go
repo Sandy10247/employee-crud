@@ -62,4 +62,12 @@ func registerUserRoutes(r chi.Router) {
 			r.Get("/net-sal", employeehandler.NetSalary)
 		})
 	})
+
+	// Admin Routes
+	r.Route("/admin", func(r chi.Router) {
+		// Admin Middleware
+
+		r.Get("/sal-metrics", employeehandler.GetSalaryMetricsByCountry) // Get Salary Metrics
+		r.Get("/sal-avg", employeehandler.GetAvgSalaryPerJobTitle)
+	})
 }

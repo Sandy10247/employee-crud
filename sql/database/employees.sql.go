@@ -70,6 +70,26 @@ func (q *Queries) DeleteEmployeeByUserId(ctx context.Context, userID int64) (*Em
 	return &i, err
 }
 
+const getAvgSalaryPerJobTitle = `-- name: GetAvgSalaryPerJobTitle :one
+SELECT 
+    ROUND(AVG(salary), 2)   AS average_salary,
+    COUNT(*)                AS employee_count
+FROM employees
+WHERE job_title = $1
+`
+
+type GetAvgSalaryPerJobTitleRow struct {
+	AverageSalary pgtype.Numeric `json:"average_salary"`
+	EmployeeCount int64          `json:"employee_count"`
+}
+
+func (q *Queries) GetAvgSalaryPerJobTitle(ctx context.Context, jobTitle string) (*GetAvgSalaryPerJobTitleRow, error) {
+	row := q.db.QueryRow(ctx, getAvgSalaryPerJobTitle, jobTitle)
+	var i GetAvgSalaryPerJobTitleRow
+	err := row.Scan(&i.AverageSalary, &i.EmployeeCount)
+	return &i, err
+}
+
 const getEmployeByuserById = `-- name: GetEmployeByuserById :one
 SELECT id, user_id, job_title, country, salary, created_at FROM employees WHERE user_id = $1
 `
@@ -84,6 +104,35 @@ func (q *Queries) GetEmployeByuserById(ctx context.Context, userID int64) (*Empl
 		&i.Country,
 		&i.Salary,
 		&i.CreatedAt,
+	)
+	return &i, err
+}
+
+const getSalaryMetricsByCountry = `-- name: GetSalaryMetricsByCountry :one
+SELECT 
+    ROUND(MIN(salary), 2)   AS min_salary,
+    ROUND(MAX(salary), 2)   AS max_salary,
+    ROUND(AVG(salary), 2)   AS avg_salary,
+    COUNT(*)                AS employee_count
+FROM employees
+WHERE country = $1
+`
+
+type GetSalaryMetricsByCountryRow struct {
+	MinSalary     pgtype.Numeric `json:"min_salary"`
+	MaxSalary     pgtype.Numeric `json:"max_salary"`
+	AvgSalary     pgtype.Numeric `json:"avg_salary"`
+	EmployeeCount int64          `json:"employee_count"`
+}
+
+func (q *Queries) GetSalaryMetricsByCountry(ctx context.Context, country string) (*GetSalaryMetricsByCountryRow, error) {
+	row := q.db.QueryRow(ctx, getSalaryMetricsByCountry, country)
+	var i GetSalaryMetricsByCountryRow
+	err := row.Scan(
+		&i.MinSalary,
+		&i.MaxSalary,
+		&i.AvgSalary,
+		&i.EmployeeCount,
 	)
 	return &i, err
 }

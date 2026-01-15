@@ -25,3 +25,20 @@ RETURNING *;
 
 -- name: DeleteEmployeeByUserId :one
 DELETE FROM employees WHERE user_id = $1 RETURNING *;
+
+
+-- name: GetSalaryMetricsByCountry :one
+SELECT 
+    ROUND(MIN(salary), 2)   AS min_salary,
+    ROUND(MAX(salary), 2)   AS max_salary,
+    ROUND(AVG(salary), 2)   AS avg_salary,
+    COUNT(*)                AS employee_count
+FROM employees
+WHERE country = $1;
+
+-- name: GetAvgSalaryPerJobTitle :one
+SELECT 
+    ROUND(AVG(salary), 2)   AS average_salary,
+    COUNT(*)                AS employee_count
+FROM employees
+WHERE job_title = $1;
