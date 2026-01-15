@@ -31,7 +31,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"joker\",\n\t\"password\": \"joker\",\n\t\"email\": \"joker@gmail.com\"\n}",
+					"raw": "{\n\t\"username\": \"bane\",\n\t\"password\": \"bane\",\n\t\"email\": \"bane@gmail.com\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -123,7 +123,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"job_title\": \"chaos engineer\",\n\t\"country\": \"usa\",\n\t\"salary\": 10000000\n}",
+					"raw": "{\n\t\"job_title\": \"chaos engineer\",\n\t\"country\": \"Germany\",\n\t\"salary\": 10000000\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -177,7 +177,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"job_title\": \"Go Programmer\",\n\t\"country\": \"India\",\n\t\"salary\": 1047.24\n}",
+					"raw": "{\n\t\"job_title\": \"Mechanical Engineer\",\n\t\"country\": \"Germany\",\n\t\"salary\": 60000000.24\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -242,6 +242,98 @@
 						"v1",
 						"emp",
 						"net-sal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Salary Metrics",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"job_title\": \"Mechanical Engineer\",\n\t\"country\": \"Germany\",\n\t\"salary\": 60000000.24\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/admin/sal-metrics?country=Germany",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"sal-metrics"
+					],
+					"query": [
+						{
+							"key": "country",
+							"value": "Germany"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Avg Salary By Job",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"job_title\": \"Mechanical Engineer\",\n\t\"country\": \"Germany\",\n\t\"salary\": 60000000.24\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/admin/sal-avg?job_title=Mechanical Engineer",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"sal-avg"
+					],
+					"query": [
+						{
+							"key": "job_title",
+							"value": "Mechanical Engineer"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SL make break",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"secret_key\": \"weimar_republic_is_our_destiny\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/supreme-leader/make-break",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"supreme-leader",
+						"make-break"
 					]
 				}
 			},

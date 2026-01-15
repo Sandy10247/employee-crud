@@ -3,7 +3,6 @@ package adminhandler
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	"server/http/middleware"
@@ -16,8 +15,6 @@ import (
 
 // Make the user Admin, if they are so Remove then as Admin
 func MakeBreak(w http.ResponseWriter, r *http.Request) {
-	log.Printf("reached make break")
-
 	// Extract UserInfo from context
 	userInfo, ok := middleware.GetUserFromContext(r.Context())
 	if !ok {
@@ -27,6 +24,7 @@ func MakeBreak(w http.ResponseWriter, r *http.Request) {
 
 	// check whether user is Admin
 	_, err := db.Queries.GetAdminUser(r.Context(), userInfo.ID)
+	// User is not Admin
 	if err != nil && errors.Is(err, pgx.ErrNoRows) {
 		_, err := db.Queries.CreateAdminUser(r.Context(), userInfo.ID)
 		if err != nil {

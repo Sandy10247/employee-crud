@@ -8,11 +8,14 @@ instal_sqlc :
 install_goose :
 	@go install github.com/pressly/goose/v3/cmd/goose@latest
 
+goose_status:
+	cd sql/schema && go build -o goose-custom *.go && ./goose-custom status && rm goose-custom
+
 goose_up:
-	cd sql/schema && goose postgres postgres://phani:postgres@localhost:5432/test1 up
+	cd sql/schema && go build -o goose-custom *.go && ./goose-custom up && rm goose-custom
 
 goose_down:
-	cd sql/schema && goose postgres postgres://phani:postgres@localhost:5432/test1 down
+	cd sql/schema && go build -o goose-custom *.go && ./goose-custom down && rm goose-custom
 
 sqlc:
 	sqlc generate

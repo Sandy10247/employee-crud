@@ -15,6 +15,12 @@ import (
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
 
+// Global variables to hold the database and queries
+var (
+	DB      *pgx.Conn
+	Queries *sqlc.Queries
+)
+
 // Config holds the configuration for database connection
 type Config struct {
 	Driver   string
@@ -28,8 +34,6 @@ type Config struct {
 
 // LoadConfig loads database configuration from environment variables or another source
 func LoadConfig() Config {
-	// DB_URL=postgres://postgres:root@localhost:5432/attempt2?sslmode=disable
-
 	return Config{
 		Driver:   getEnv("DB_DRIVER", "postgres"),
 		Host:     getEnv("DB_HOST", "postgres"),
@@ -59,12 +63,6 @@ func getEnvInt(key string, defaultValue int) int {
 	}
 	return defaultValue
 }
-
-// Global variables to hold the database and queries
-var (
-	DB      *pgx.Conn
-	Queries *sqlc.Queries
-)
 
 func DSN(c *Config) string {
 	return "host=" + c.Host +
@@ -99,17 +97,6 @@ func ConnectDB() error {
 	config := LoadConfig()
 
 	conn := Connect(&config)
-
-	// driver://user:password@host:port/database
-	// dsn := fmt.Sprintf(
-	// 	"%s://%s:%s@%s:%d/%s?sslmode=%s",
-	// 	config.Driver, config.User, config.Password, config.Host, config.Port, config.DBName, config.SSLMode,
-	// )
-
-	// db, err := sql.Open("postgres", dsn)
-	// if err != nil {
-	// 	return fmt.Errorf("could not open db: %w", err)
-	// }
 
 	ctx, cancelFn := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancelFn()
