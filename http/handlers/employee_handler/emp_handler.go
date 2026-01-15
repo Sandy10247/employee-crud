@@ -4,31 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 
+	"server/http/helper"
 	"server/http/middleware"
 	"server/http/response"
 	"server/sql/database"
 
 	db "server/init"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
-
-func floatToNumeric(f float64, precision int) (pgtype.Numeric, error) {
-	var numericValue pgtype.Numeric
-
-	// Format the float to a string with the desired precision
-	// 'f' format specifier, precision specifies the number of digits after the decimal point
-	str := strconv.FormatFloat(f, 'f', precision, 64)
-
-	// Use Scan to parse the string into the pgtype.Numeric struct
-	if err := numericValue.Scan(str); err != nil {
-		return pgtype.Numeric{}, fmt.Errorf("failed to scan string to pgtype.Numeric: %w", err)
-	}
-
-	return numericValue, nil
-}
 
 func CreateEmp(w http.ResponseWriter, r *http.Request) {
 	var reqBody EmpBody
@@ -49,7 +32,7 @@ func CreateEmp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Extract Salary to pgtype.Numeric
-	salaryNumeric, err := floatToNumeric(reqBody.Salary, 2)
+	salaryNumeric, err := helper.FloatToNumeric(reqBody.Salary, 2)
 	if err != nil {
 		response.RespondeWithError(w, http.StatusUnprocessableEntity, "invalid json")
 		return
@@ -92,7 +75,7 @@ func UpdateEmp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Extract Salary to pgtype.Numeric
-	salaryNumeric, err := floatToNumeric(reqBody.Salary, 2)
+	salaryNumeric, err := helper.FloatToNumeric(reqBody.Salary, 2)
 	if err != nil {
 		response.RespondeWithError(w, http.StatusUnprocessableEntity, "invalid json")
 		return
@@ -149,4 +132,41 @@ func DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.RespondeWithJSON(w, http.StatusOK, dbEmployeeToEmpJson(emp))
+}
+
+func NetSalary(w http.ResponseWriter, r *http.Request) {
+	// Extract UserInfo from context
+	userInfo, ok := middleware.GetUserFromContext(r.Context())
+	if !ok {
+		response.RespondeWithError(w, http.StatusBadRequest, "user not found")
+		return
+	}
+
+	// Fetch Employee Details from DB
+	emp, err := db.Queries.GetEmployeByuserById(r.Context(), userInfo.ID)
+	if err != nil {
+		response.RespondeWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldnot fetch Employee %v", err))
+		return
+	}
+
+	grossSalary, err := emp.Salary.Float64Value()
+	if err != nil {
+		response.RespondeWithError(w, http.StatusInternalServerError, "Parsing Float Error")
+		return
+	}
+
+	// Calculate all Salary types
+	countryTaxRate := helper.GetTaxRatePerCountry(emp.Country)
+	taxAnount := helper.CalculatePercentage(countryTaxRate, grossSalary.Float64)
+	takeHomeSalary := helper.CalculateNetSalary(grossSalary.Float64, taxAnount)
+
+	// construct the payload
+	resp := map[string]float64{
+		"real_salary":      grossSalary.Float64,
+		"government_cut":   taxAnount,
+		"take_home_salary": takeHomeSalary,
+	}
+
+	// Send the Responses
+	response.RespondeWithJSON(w, http.StatusOK, resp)
 }

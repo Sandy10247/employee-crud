@@ -54,9 +54,12 @@ func registerUserRoutes(r chi.Router) {
 		r.Get("/logout", userhandler.LogOut)
 
 		// Employee 🤵
-		r.Post("/emp/new", employeehandler.CreateEmp)
-		r.Post("/emp/update", employeehandler.UpdateEmp)
-		r.Get("/emp/details", employeehandler.GetEmployee)
-		r.Delete("/emp/delete", employeehandler.DeleteEmployee)
+		r.Route("/emp", func(r chi.Router) {
+			r.Post("/new", employeehandler.CreateEmp)
+			r.Post("/update", employeehandler.UpdateEmp)
+			r.Get("/details", employeehandler.GetEmployee)
+			r.Delete("/delete", employeehandler.DeleteEmployee)
+			r.Get("/net-sal", employeehandler.NetSalary)
+		})
 	})
 }
