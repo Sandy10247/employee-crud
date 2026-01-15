@@ -31,7 +31,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"sandy10247\",\n\t\"password\": \"Samaritan\",\n\t\"email\": \"sandilyakaravadi@gmail.com\"\n}",
+					"raw": "{\n\t\"username\": \"joker\",\n\t\"password\": \"joker\",\n\t\"email\": \"joker@gmail.com\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -58,7 +58,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"sandy10247\",\n\t\"password\": \"Samaritan\"\n}"
+					"raw": "{\n\t\"username\": \"joker\",\n\t\"password\": \"joker\"\n}"
 				},
 				"url": {
 					"raw": "{{BASE_URL}}/v1/login",
@@ -111,6 +111,137 @@
 					"path": [
 						"v1",
 						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Emp Create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"job_title\": \"chaos engineer\",\n\t\"country\": \"usa\",\n\t\"salary\": 10000000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/emp/new",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"emp",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Emp Details",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"job_title\": \"Programmer\",\n\t\"country\": \"India\",\n\t\"salary\": 10247.24\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/emp/details",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"emp",
+						"details"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Emp",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"job_title\": \"Go Programmer\",\n\t\"country\": \"India\",\n\t\"salary\": 1047.24\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/emp/update",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"emp",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Emp",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"job_title\": \"Go Programmer\",\n\t\"country\": \"India\",\n\t\"salary\": 1047.24\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/emp/delete",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"emp",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "net salary",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"job_title\": \"Programmer\",\n\t\"country\": \"India\",\n\t\"salary\": 10247.24\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/emp/net-sal",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"emp",
+						"net-sal"
 					]
 				}
 			},
