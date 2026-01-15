@@ -170,3 +170,32 @@ func NetSalary(w http.ResponseWriter, r *http.Request) {
 	// Send the Responses
 	response.RespondeWithJSON(w, http.StatusOK, resp)
 }
+
+// Admin Route
+func GetSalaryMetricsByCountry(w http.ResponseWriter, r *http.Request) {
+	// extract country from Query
+	country := r.URL.Query().Get("country")
+
+	// Delete Employee
+	salaryMetrics, err := db.Queries.GetSalaryMetricsByCountry(r.Context(), country)
+	if err != nil {
+		response.RespondeWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldnot Delete Employee %v", err))
+		return
+	}
+
+	response.RespondeWithJSON(w, http.StatusOK, salaryMetrics)
+}
+
+func GetAvgSalaryPerJobTitle(w http.ResponseWriter, r *http.Request) {
+	// extract country from Query
+	JobTitle := r.URL.Query().Get("job_title")
+
+	// Delete Employee
+	AvgSalaryResp, err := db.Queries.GetAvgSalaryPerJobTitle(r.Context(), JobTitle)
+	if err != nil {
+		response.RespondeWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldnot Delete Employee %v", err))
+		return
+	}
+
+	response.RespondeWithJSON(w, http.StatusOK, AvgSalaryResp)
+}
