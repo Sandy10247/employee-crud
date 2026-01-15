@@ -81,6 +81,7 @@ func registerUserRoutes(r chi.Router) {
 		r.Use(md.JWTMiddleware)           // Has to a legit User
 		r.Use(md.SupremeLeaderMiddleware) // Check for Supreme Leader
 
+		// Supreme Leader only can make or break an Admin ⚡️⚡️
 		r.Post("/make-break", adminhandler.MakeBreak)
 	})
 }
