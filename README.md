@@ -85,8 +85,7 @@ Requires **JWT + Supreme Leader middleware**.
   - `env` variables setup need finess 🤌.
   -  **testing** is nowhere to be found 🤷‍♂️
 
-## Missing Features 🧰
-- Logging need to nuch more cleaner.
+## Missing Features 🧰 (None 🙇)
 
 
 

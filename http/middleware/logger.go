@@ -1,55 +1,38 @@
 package middleware
 
 import (
-	"fmt"
-	"log"
+	"context"
 	"net/http"
 	"time"
 
-	"github.com/fatih/color"
+	"go.uber.org/zap"
 )
 
-func Logger(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+type contextLoggerKey string
 
-		lrw := &loggingResponseWriter{ResponseWriter: w, statusCode: http.StatusOK}
-		next.ServeHTTP(lrw, r)
+const (
+	// UserIDKey is the key for user ID in the request context
+	loggerKey contextLoggerKey = "logger"
+)
 
-		end := time.Now()
-		duration := end.Sub(start)
+func ZapMiddleware(logger *zap.Logger) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			start := time.Now()
+			// Add the logger to the request context
+			ctx := context.WithValue(r.Context(), loggerKey, logger)
+			r = r.WithContext(ctx)
 
-		var statusColor func(format string, a ...interface{}) string
+			// Log the request details after the handler finishes
+			defer func() {
+				logger.Info("request completed",
+					zap.String("method", r.Method),
+					zap.String("path", r.URL.Path),
+					zap.Duration("duration", time.Since(start)),
+				)
+			}()
 
-		switch {
-		case lrw.statusCode >= 500:
-			statusColor = color.New(color.FgRed).SprintfFunc()
-		case lrw.statusCode >= 400:
-			statusColor = color.New(color.FgYellow).SprintfFunc()
-		case lrw.statusCode >= 300:
-			statusColor = color.New(color.FgCyan).SprintfFunc()
-		default:
-			statusColor = color.New(color.FgGreen).SprintfFunc()
-		}
-
-		logInfo := fmt.Sprintf("%s %s : %-30s %s : %v",
-			end.Format(time.RFC3339),          // TIMESTAMP
-			color.BlueString(r.Method),        // REQUEST_HEADER (METHOD)
-			color.GreenString(r.URL.Path),     // ENDPOINT
-			statusColor("%d", lrw.statusCode), // RESPONSE_CODE
-			duration,                          // TIME_TAKEN
-		)
-
-		log.Println(logInfo)
-	})
-}
-
-type loggingResponseWriter struct {
-	http.ResponseWriter
-	statusCode int
-}
-
-func (lrw *loggingResponseWriter) WriteHeader(code int) {
-	lrw.statusCode = code
-	lrw.ResponseWriter.WriteHeader(code)
+			next.ServeHTTP(w, r)
+		})
+	}
 }

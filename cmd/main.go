@@ -7,40 +7,73 @@ import (
 	"time"
 
 	"server/http/helper"
-	router "server/http/router"
+	"server/http/router"
 	db "server/init"
 
 	"github.com/joho/godotenv"
+
+	"go.uber.org/zap"
 )
 
-func main() {
+func createLogger(env string) (*zap.Logger, error) {
+	switch env {
+	case "production":
+		return zap.NewProduction()
+	case "development":
+		return zap.NewDevelopment()
+	default:
+		return zap.NewNop(), nil
+	}
+}
+
+func CreateHttpServer(port string, router http.Handler) *http.Server {
+	server := &http.Server{
+		Handler:      router,
+		Addr:         ":" + port,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
+	}
+	return server
+}
+
+func start() int {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("ERROR loading env :", err)
+		log.Fatal("ERROR loading env :- ", zap.Error(err))
 	}
+	logEnv := helper.GetEnv("LOG_ENV", "development")
+	log, err := createLogger(logEnv)
+	if err != nil {
+		log.Info("Error setting up the logger :- ", zap.Error(err))
+		return 1
+	}
+	defer func() {
+		// If we cannot sync, there's probably something wrong with outputting logs,
+		// so we probably cannot write using fmt.Println either. So just ignore the error.
+		_ = log.Sync()
+	}()
 
 	err = db.ConnectDB()
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Sugar().Panicf("Failed to connect to database: %v", err)
 	}
-
 	defer db.DisconnectDB()
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	// extract PORT
+	port := helper.GetEnv("PORT", "8080")
+
+	// Create Http.Server
+	srv := CreateHttpServer(port, router.InitRouter(log))
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
 
-	srv := serve(port)
-	println("Server running on port", port)
-
+	// Run Server in an Go Routine
 	go func() {
 		err = srv.ListenAndServe()
 		if err != nil {
-			log.Printf("ERROR starting server : %v\n", err)
+			log.Info("Error starting server", zap.Error(err))
 		}
 	}()
 
@@ -51,19 +84,10 @@ func main() {
 
 	// Wait for the graceful shutdown to complete
 	<-done
-	log.Println("Graceful shutdown complete.")
+	log.Info("Graceful shutdown complete.")
+	return 0
 }
 
-func serve(port string) *http.Server {
-	router := router.InitRouter()
-
-	server := &http.Server{
-		Handler:      router,
-		Addr:         ":" + port,
-		IdleTimeout:  time.Minute,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Second,
-	}
-
-	return server
+func main() {
+	os.Exit(start())
 }
