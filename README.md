@@ -1,6 +1,14 @@
 # employee-crud
 A demo Server for Employee CRUD API
 
+
+## Run
+- rename `.env.dummy` --> `.env`
+- fill out variable as per your local DB setup
+- run `make goose_up` to setup db table
+- load up the collection `employee-crud.postman_collection` in `Postman`
+
+
 ## DB design
 <img src="./mermaid-diagram.svg" alt="DB Design Diagram" />
 
@@ -68,6 +76,20 @@ Requires **JWT + Supreme Leader middleware**.
 - `JWTMiddleware` → verifies JWT token
 - `CheckAdminMiddleware` → checks if user has admin record
 - `SupremeLeaderMiddleware` → checks for supreme leader privilege (probably hardcoded or special flag)
+
+## 🫵 Issues 💔
+- docker compose yaml setup is shit 💩,
+  - `go` container has `.env` file setup issue in Container
+  - need to run `postgres` and `goose` after postgres conatiner is up to load tables. 
+- Server
+  - `env` variables setup need finess 🤌.
+  -  **testing** is nowhere to be found 🤷‍♂️
+
+## Missing Features 🧰
+- Rate Limitter. 
+- Logging need to nuch more cleaner.
+
+
 
 
 
