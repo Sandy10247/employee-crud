@@ -1,3 +1,7 @@
+# Define ANSI color codes as variables
+COL_RED=\033[0;31m
+COL_GREEN=\033[0;32m
+
 run: 
 	@echo "Running Server....."
 	@go run cmd/*.go
@@ -19,3 +23,15 @@ goose_down:
 
 sqlc:
 	sqlc generate
+
+clean_shit:
+	@echo "Removing all branches Except `master`"
+	@git checkout master && git branch | grep -v "master" | xargs git branch -D
+
+docker_up:
+	@echo "$(COL_GREEN)Running Docker Compose ⬆️ ✅$(COL_GREEN)"
+	@docker compose up -d --build
+
+docker_down:
+	@echo "$(COL_RED)Running Docker Compose ⬇️ 🔴 $(COL_RED)"
+	@docker compose down
