@@ -86,7 +86,6 @@ Requires **JWT + Supreme Leader middleware**.
   -  **testing** is nowhere to be found 🤷‍♂️
 
 ## Missing Features 🧰
-- Rate Limitter. 
 - Logging need to nuch more cleaner.
 
 
