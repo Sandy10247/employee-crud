@@ -5,10 +5,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"time"
 
+	"server/http/helper"
 	sqlc "server/sql/database" // Adjust this import path as per your project structure
 
 	"github.com/jackc/pgx/v5"
@@ -35,33 +35,14 @@ type Config struct {
 // LoadConfig loads database configuration from environment variables or another source
 func LoadConfig() Config {
 	return Config{
-		Driver:   getEnv("DB_DRIVER", "postgres"),
-		Host:     getEnv("DB_HOST", "postgres"),
-		Port:     getEnvInt("DB_PORT", 5432),
-		User:     getEnv("DB_USER", "postgres"),
-		Password: getEnv("DB_PASSWORD", "root"),
-		DBName:   getEnv("DB_NAME", "attempt2"),
-		SSLMode:  getEnv("DB_SSLMODE", "disable"),
+		Driver:   helper.GetEnv("DB_DRIVER", "postgres"),
+		Host:     helper.GetEnv("DB_HOST", "postgres"),
+		Port:     helper.GetEnvInt("DB_PORT", 5432),
+		User:     helper.GetEnv("DB_USER", "postgres"),
+		Password: helper.GetEnv("DB_PASSWORD", "root"),
+		DBName:   helper.GetEnv("DB_NAME", "attempt2"),
+		SSLMode:  helper.GetEnv("DB_SSLMODE", "disable"),
 	}
-}
-
-// getEnv retrieves environment variables or returns a default value
-func getEnv(key, defaultValue string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultValue
-}
-
-// getEnvInt retrieves integer environment variables or returns a default value
-func getEnvInt(key string, defaultValue int) int {
-	if value, exists := os.LookupEnv(key); exists {
-		intValue, err := strconv.Atoi(value)
-		if err == nil {
-			return intValue
-		}
-	}
-	return defaultValue
 }
 
 func DSN(c *Config) string {

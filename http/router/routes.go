@@ -8,16 +8,18 @@ import (
 	employeehandler "server/http/handlers/employee_handler"
 	userhandler "server/http/handlers/user_handler"
 	"server/http/handlers/util"
+	"server/http/middleware"
 	md "server/http/middleware"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
+	"go.uber.org/zap"
 )
 
-func InitRouter() http.Handler {
+func InitRouter(logger *zap.Logger) http.Handler {
 	router := chi.NewRouter()
-	router.Use(md.Logger)
+	router.Use(middleware.ZapMiddleware(logger))
 
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},

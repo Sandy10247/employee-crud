@@ -77,7 +77,7 @@ func CalculatePercentage(percent, total float64) float64 {
 func GetTaxRatePerCountry(country string) float64 {
 	// extract country tax from ".env"
 	countryCleaned := strings.ToLower(country)
-	taxRate := os.Getenv(countryCleaned)
+	taxRate := GetEnv(countryCleaned, "")
 
 	taxRateFloat, err := strconv.ParseFloat(taxRate, 64)
 	if err != nil {
@@ -85,4 +85,23 @@ func GetTaxRatePerCountry(country string) float64 {
 	}
 
 	return taxRateFloat
+}
+
+// getEnv retrieves environment variables or returns a default value
+func GetEnv(key, defaultValue string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultValue
+}
+
+// getEnvInt retrieves integer environment variables or returns a default value
+func GetEnvInt(key string, defaultValue int) int {
+	if value, exists := os.LookupEnv(key); exists {
+		intValue, err := strconv.Atoi(value)
+		if err == nil {
+			return intValue
+		}
+	}
+	return defaultValue
 }
