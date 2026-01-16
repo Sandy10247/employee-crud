@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+	"time"
 
 	adminhandler "server/http/handlers/admin_handler"
 	employeehandler "server/http/handlers/employee_handler"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/httprate"
 )
 
 func InitRouter() http.Handler {
@@ -27,6 +29,9 @@ func InitRouter() http.Handler {
 	}))
 
 	v1Router := chi.NewRouter()
+
+	// Register Rate Limitter for "/v1"
+	v1Router.Use(httprate.LimitByIP(10, time.Minute))
 
 	registerUtilRoutes(v1Router)
 	registerUserRoutes(v1Router)

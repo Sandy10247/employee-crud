@@ -26,7 +26,9 @@ sqlc:
 
 clean_shit:
 	@echo "Removing all branches Except `master`"
-	@git checkout master && git branch | grep -v "master" | xargs git branch -D
+	@git checkout master && git branch | grep -v "master" | xargs git branch -D 
+	@echo "$(COL_GREEN)Pull `master`$(COL_GREEN)"
+	@git pull
 
 docker_up:
 	@echo "$(COL_GREEN)Running Docker Compose ⬆️ ✅$(COL_GREEN)"
